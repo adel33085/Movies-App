@@ -13,4 +13,8 @@ class RemoteDataSource(private val api: ApiService) {
     suspend fun getPopularPersonImages(personId: Int) = safeApiCall {
         api.getPopularPersonImages(personId)
     }
+
+    suspend fun searchPopularPersons(searchKeywords: String, pageNumber: Int) = safeApiCall {
+        api.searchPopularPersons(searchKeywords, pageNumber)
+    }
 }

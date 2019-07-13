@@ -9,6 +9,7 @@ import com.alexander.data.remote.Status
 import com.alexander.domain.entity.PopularPerson
 import com.alexander.moviesapp.R
 import com.alexander.moviesapp.ui.popularPersonDetails.PopularPersonDetailsActivity
+import com.alexander.moviesapp.ui.search.SearchActivity
 import kotlinx.android.synthetic.main.network_state_list_item.*
 import kotlinx.android.synthetic.main.popular_persons_activity.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -44,6 +45,11 @@ class PopularPersonsActivity : AppCompatActivity(), OnPopularPersonClickListener
                 viewModel.retry()
             }
         })
+
+        searchFabButton.setOnClickListener {
+            val intent = Intent(this, SearchActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     override fun onPopularPersonClick(person: PopularPerson) {

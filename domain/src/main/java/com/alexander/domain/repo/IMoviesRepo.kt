@@ -7,4 +7,5 @@ import com.alexander.domain.entity.RequestResult
 interface IMoviesRepo {
     suspend fun getPopularPersons(pageNumber: Int): RequestResult<List<PopularPerson>>
     suspend fun getPopularPersonDetails(personId: Int): RequestResult<PopularPersonDetails>
+    suspend fun searchPopularPersons(searchKeywords: String, pageNumber: Int): RequestResult<List<PopularPerson>>
 }

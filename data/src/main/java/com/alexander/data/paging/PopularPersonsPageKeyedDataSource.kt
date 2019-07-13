@@ -9,7 +9,8 @@ import com.alexander.domain.repo.IMoviesRepo
 import kotlinx.coroutines.runBlocking
 
 class PopularPersonsPageKeyedDataSource(
-    private val moviesRepo: IMoviesRepo
+    private val moviesRepo: IMoviesRepo,
+    private val searchKeywords: String?
 ) : PageKeyedDataSource<Int, PopularPerson>() {
 
     private var retry: (() -> Any)? = null
@@ -26,13 +27,23 @@ class PopularPersonsPageKeyedDataSource(
         networkState.postValue(NetworkState.LOADING)
         initialNetworkState.postValue(NetworkState.LOADING)
         runBlocking {
-            val result = moviesRepo.getPopularPersons(1)
+            val result = if (searchKeywords.isNullOrEmpty()) {
+                moviesRepo.getPopularPersons(1)
+            } else {
+                moviesRepo.searchPopularPersons(searchKeywords, 1)
+            }
             when (result) {
                 is RequestResult.Success -> {
                     retry = null
-                    networkState.postValue(NetworkState.LOADED)
-                    initialNetworkState.postValue(NetworkState.LOADED)
-                    callback.onResult(result.data, null, 2)
+                    if (!result.data.isNullOrEmpty()) {
+                        networkState.postValue(NetworkState.LOADED)
+                        initialNetworkState.postValue(NetworkState.LOADED)
+                        callback.onResult(result.data, null, 2)
+                    } else {
+                        val error = NetworkState.error("No result found !")
+                        networkState.postValue(error)
+                        initialNetworkState.postValue(error)
+                    }
                 }
                 is RequestResult.Error -> {
                     retry = {
@@ -51,7 +62,11 @@ class PopularPersonsPageKeyedDataSource(
     override fun loadAfter(params: LoadParams<Int>, callback: LoadCallback<Int, PopularPerson>) {
         networkState.postValue(NetworkState.LOADING)
         runBlocking {
-            val result = moviesRepo.getPopularPersons(params.key)
+            val result = if (searchKeywords.isNullOrEmpty()) {
+                moviesRepo.getPopularPersons(params.key)
+            } else {
+                moviesRepo.searchPopularPersons(searchKeywords, params.key)
+            }
             when (result) {
                 is RequestResult.Success -> {
                     retry = null

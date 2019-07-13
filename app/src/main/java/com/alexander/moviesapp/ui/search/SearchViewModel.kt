@@ -1,4 +1,4 @@
-package com.alexander.moviesapp.ui.popularPersons
+package com.alexander.moviesapp.ui.search
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
@@ -10,16 +10,14 @@ import com.alexander.data.remote.NetworkState
 import com.alexander.domain.entity.PopularPerson
 import com.alexander.domain.repo.IMoviesRepo
 
-class PopularPersonsViewModel(
-    private val moviesRepo: IMoviesRepo
-) : ViewModel() {
+class SearchViewModel(private val moviesRepo: IMoviesRepo) : ViewModel() {
 
-    val dataSourceFactory: PopularPersonsDataSourceFactory
-    val popularPersonsList: LiveData<PagedList<PopularPerson>>
-    var initialNetworkState: LiveData<NetworkState>
-    var networkState: LiveData<NetworkState>
+    lateinit var dataSourceFactory: PopularPersonsDataSourceFactory
+    lateinit var popularPersonsList: LiveData<PagedList<PopularPerson>>
+    lateinit var initialNetworkState: LiveData<NetworkState>
+    lateinit var networkState: LiveData<NetworkState>
 
-    init {
+    fun getPopularPersons(searchKeywords: String) {
         val config = PagedList
             .Config
             .Builder()
@@ -28,7 +26,7 @@ class PopularPersonsViewModel(
             .setEnablePlaceholders(false)
             .build()
 
-        dataSourceFactory = PopularPersonsDataSourceFactory(moviesRepo, null)
+        dataSourceFactory = PopularPersonsDataSourceFactory(moviesRepo, searchKeywords)
 
         popularPersonsList = LivePagedListBuilder(dataSourceFactory, config).build()
 

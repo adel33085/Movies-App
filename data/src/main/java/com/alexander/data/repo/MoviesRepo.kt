@@ -56,4 +56,19 @@ class MoviesRepo(private val remoteDataSource: RemoteDataSource) : IMoviesRepo {
         }
         return images
     }
+
+    override suspend fun searchPopularPersons(
+        searchKeywords: String,
+        pageNumber: Int
+    ): RequestResult<List<PopularPerson>> {
+        return when (val result = remoteDataSource.searchPopularPersons(searchKeywords, pageNumber)) {
+            is RequestResult.Success -> {
+                val data = result.data.popularPersons?.mapNotNull { it.toPopularPerson() } ?: emptyList()
+                RequestResult.Success(data)
+            }
+            is RequestResult.Error -> {
+                RequestResult.Error(result.exception)
+            }
+        }
+    }
 }

@@ -23,4 +23,10 @@ interface ApiService {
     suspend fun getPopularPersonImages(
         @Path("person_id") personId: Int
     ): ApiPopularPersonImagesResult
+
+    @GET("search/person")
+    suspend fun searchPopularPersons(
+        @Query("query") searchKeywords: String,
+        @Query("page") pageNumber: Int
+    ): ApiPopularPersonsResult
 }
