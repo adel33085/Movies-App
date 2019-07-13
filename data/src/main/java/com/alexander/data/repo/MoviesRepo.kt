@@ -1,9 +1,8 @@
 package com.alexander.data.repo
 
 import com.alexander.data.remote.RemoteDataSource
-import com.alexander.data.remote.entity.toImages
-import com.alexander.data.remote.entity.toPopularPerson
-import com.alexander.data.remote.entity.toPopularPersonDetails
+import com.alexander.data.remote.entity.*
+import com.alexander.domain.entity.Actor
 import com.alexander.domain.entity.PopularPerson
 import com.alexander.domain.entity.PopularPersonDetails
 import com.alexander.domain.entity.RequestResult
@@ -70,5 +69,56 @@ class MoviesRepo(private val remoteDataSource: RemoteDataSource) : IMoviesRepo {
                 RequestResult.Error(result.exception)
             }
         }
+    }
+
+    private val allActors = mutableListOf<Actor>()
+
+    private val repeatedActors = mutableListOf<Actor>()
+
+    override suspend fun getRepeatedActors(): RequestResult<List<Actor>> {
+        allActors.clear()
+        repeatedActors.clear()
+        return when (val result = remoteDataSource.getTopRatedMovies(1)) {
+            is RequestResult.Success -> {
+                val moviesList = result.data.movies
+                RequestResult.Success(getActors(moviesList))
+            }
+            is RequestResult.Error -> {
+                RequestResult.Error(result.exception)
+            }
+        }
+    }
+
+    private suspend fun getActors(moviesList: List<ApiMovie?>?): List<Actor> {
+        if (!moviesList.isNullOrEmpty()) {
+            for (movie in moviesList) {
+                when (val result = remoteDataSource.getMovieCredits(movie?.id!!)) {
+                    is RequestResult.Success -> {
+                        val actorsList = result.data.cast?.mapNotNull { it.toActor() } ?: emptyList()
+                        if (!actorsList.isNullOrEmpty()) {
+                            for (actor in actorsList) {
+                                if (!contains(allActors, actor)) {
+                                    allActors.add(actor)
+                                } else {
+                                    if (!contains(repeatedActors, actor)) {
+                                        repeatedActors.add(actor)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return repeatedActors
+    }
+
+    private fun contains(actorsList: List<Actor>, actor: Actor): Boolean {
+        for (actorInList in actorsList) {
+            if (actorInList.actorId == actor.actorId) {
+                return true
+            }
+        }
+        return false
     }
 }

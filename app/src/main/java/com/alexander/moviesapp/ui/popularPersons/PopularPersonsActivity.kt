@@ -9,6 +9,7 @@ import com.alexander.data.remote.Status
 import com.alexander.domain.entity.PopularPerson
 import com.alexander.moviesapp.R
 import com.alexander.moviesapp.ui.popularPersonDetails.PopularPersonDetailsActivity
+import com.alexander.moviesapp.ui.repeatedActors.RepeatedActorsActivity
 import com.alexander.moviesapp.ui.search.SearchActivity
 import kotlinx.android.synthetic.main.network_state_list_item.*
 import kotlinx.android.synthetic.main.popular_persons_activity.*
@@ -36,7 +37,8 @@ class PopularPersonsActivity : AppCompatActivity(), OnPopularPersonClickListener
 
         viewModel.initialNetworkState.observe(this, Observer {
             mainLayout.visibility = if (it?.status == Status.SUCCESS) View.VISIBLE else View.GONE
-            networkStateLayout.visibility = if (it?.status == Status.RUNNING || it?.status == Status.FAILED) View.VISIBLE else View.GONE
+            networkStateLayout.visibility =
+                if (it?.status == Status.RUNNING || it?.status == Status.FAILED) View.VISIBLE else View.GONE
             loadingIndicator.visibility = if (it?.status == Status.RUNNING) View.VISIBLE else View.GONE
             retryButton.visibility = if (it?.status == Status.FAILED) View.VISIBLE else View.GONE
             errorMessageTextView.visibility = if (it?.message != null) View.VISIBLE else View.GONE
@@ -48,6 +50,11 @@ class PopularPersonsActivity : AppCompatActivity(), OnPopularPersonClickListener
 
         searchFabButton.setOnClickListener {
             val intent = Intent(this, SearchActivity::class.java)
+            startActivity(intent)
+        }
+
+        repeatedActorsFabButton.setOnClickListener {
+            val intent = Intent(this, RepeatedActorsActivity::class.java)
             startActivity(intent)
         }
     }
