@@ -14,7 +14,7 @@
             android:theme="@style/AppTheme"
             android:name=".MyApplication">
 
-        <activity android:name=".MainActivity">
+        <activity android:name=".ui.popularPersons.PopularPersonsActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
