@@ -4,6 +4,7 @@ import com.alexander.data.remote.Network
 import com.alexander.data.remote.RemoteDataSource
 import com.alexander.data.repo.MoviesRepo
 import com.alexander.domain.repo.IMoviesRepo
+import com.alexander.moviesapp.ui.popularPersonDetails.PopularPersonDetailsViewModel
 import com.alexander.moviesapp.ui.popularPersons.PopularPersonsViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.module.Module
@@ -23,6 +24,7 @@ private val repositoryModule = module {
 
 private val viewModelModule = module {
     viewModel { PopularPersonsViewModel(get()) }
+    viewModel { PopularPersonDetailsViewModel(get()) }
 }
 
 fun getModules(): Array<Module> {

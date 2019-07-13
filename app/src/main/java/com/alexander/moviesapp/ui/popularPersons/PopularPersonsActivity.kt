@@ -1,5 +1,6 @@
 package com.alexander.moviesapp.ui.popularPersons
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -7,6 +8,7 @@ import androidx.lifecycle.Observer
 import com.alexander.data.remote.Status
 import com.alexander.domain.entity.PopularPerson
 import com.alexander.moviesapp.R
+import com.alexander.moviesapp.ui.popularPersonDetails.PopularPersonDetailsActivity
 import kotlinx.android.synthetic.main.network_state_list_item.*
 import kotlinx.android.synthetic.main.popular_persons_activity.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -33,8 +35,7 @@ class PopularPersonsActivity : AppCompatActivity(), OnPopularPersonClickListener
 
         viewModel.initialNetworkState.observe(this, Observer {
             mainLayout.visibility = if (it?.status == Status.SUCCESS) View.VISIBLE else View.GONE
-            networkStateLayout.visibility =
-                if (it?.status == Status.RUNNING || it?.status == Status.FAILED) View.VISIBLE else View.GONE
+            networkStateLayout.visibility = if (it?.status == Status.RUNNING || it?.status == Status.FAILED) View.VISIBLE else View.GONE
             loadingIndicator.visibility = if (it?.status == Status.RUNNING) View.VISIBLE else View.GONE
             retryButton.visibility = if (it?.status == Status.FAILED) View.VISIBLE else View.GONE
             errorMessageTextView.visibility = if (it?.message != null) View.VISIBLE else View.GONE
@@ -45,5 +46,9 @@ class PopularPersonsActivity : AppCompatActivity(), OnPopularPersonClickListener
         })
     }
 
-    override fun onPopularPersonClick(person: PopularPerson) {}
+    override fun onPopularPersonClick(person: PopularPerson) {
+        val intent = Intent(this, PopularPersonDetailsActivity::class.java)
+        intent.putExtra("key_person_id", person.id)
+        startActivity(intent)
+    }
 }
